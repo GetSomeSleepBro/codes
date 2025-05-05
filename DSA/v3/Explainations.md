@@ -1,4 +1,8 @@
-# Exaplination
+# Exaplinations
+
+|Index|
+|-|
+|[A1 - Telephone, Hash Table](#a1---telephone-hash-table)|
 
 <br><hr><br>
 
