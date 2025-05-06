@@ -136,3 +136,32 @@ int main() {
 
     return 0;
 }
+
+
+
+/*
+=========== Book Tree Menu ===========
+1. Create Book Tree
+2. Display Book Tree
+3. Quit
+Enter your choice: 1
+Enter name of the Book: name
+Enter number of Chapters (max 10): 1
+Enter name of Chapter 1: chap1
+Enter number of Sections in Chapter "chap1" (max 10): 1
+Enter name of Section 1: sec1
+
+=========== Book Tree Menu ===========
+1. Create Book Tree
+2. Display Book Tree
+3. Quit
+Enter your choice: 2
+
+------- Book Hierarchy -------
+Book Title: name
+
+  Chapter 1: chap1
+    Sections:
+      - sec1
+------------------------------
+*/
