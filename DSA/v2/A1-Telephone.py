@@ -97,3 +97,26 @@ while True:
 # Final Output
 print("\nFinal Bucket:", bucket)
 print("Final Complexity:", complexity)
+
+
+
+```
+Enter size of bucket: 2
+Enter number of telephone numbers to insert (<= bucket size): 2
+Enter telephone number 1: 1
+Enter telephone number 2: 2
+
+Initial Bucket Contents: ['2', '1']
+Insertion Complexity: ['O(1)', 'O(1)']
+Density of the bucket: 100.00%
+Collisions: []
+
+Choose collision resolution technique:
+1. Linear Probing
+2. Quadratic Probing
+Enter your choice: 1
+---------- Linear Probing Complete ----------
+
+Final Bucket: ['2', '1']
+Final Complexity: ['O(1)', 'O(1)']
+```
