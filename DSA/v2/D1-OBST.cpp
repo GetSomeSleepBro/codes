@@ -65,3 +65,12 @@ int main() {
 
     return 0;
 }
+
+
+/*
+Enter number of keys : 2
+Enter key and frequency : 3 6
+Enter key and frequency : 8 9
+
+Cost of Optimal BST : 21
+*/
