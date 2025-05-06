@@ -95,3 +95,17 @@ int main() {
 
 	return 0;
 }
+
+
+/*
+Enter Root Node: 100
+Enter Left Child of 100: 50
+Enter Right Child of 100: 150
+Enter Left Child of 50: 20
+Enter Left Child of 150: 70
+Enter Right Child of 150: 170
+Enter Right Child of 20: -1
+
+InOrder Traversal of Threaded Binary Tree:
+20 -1 50 100 70 150 170 
+*/
