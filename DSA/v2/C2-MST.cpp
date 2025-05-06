@@ -102,3 +102,59 @@ int main()
     }while(ch!=4);
     return 0;
 }
+
+
+
+/*
+==========PRIM'S ALGORITHM=================
+
+1.INPUT
+ 
+2.DISPLAY
+ 
+3.MINIMUM
+
+Enter your choice :
+1
+*******INPUT YOUR VALUES*******
+Enter the no. of branches: 2
+
+Enter the no. of connections: 2
+Enter the end branches of connections:  
+2
+3
+Enter the phone company charges for this connection:  2
+Enter the end branches of connections:  
+2
+4
+Enter the phone company charges for this connection:  4
+==========PRIM'S ALGORITHM=================
+
+1.INPUT
+ 
+2.DISPLAY
+ 
+3.MINIMUM
+
+Enter your choice :
+2
+*******DISPLAY THE CONTENTS********
+
+Adjacency matrix:
+999   999   
+
+999   999   
+==========PRIM'S ALGORITHM=================
+
+1.INPUT
+ 
+2.DISPLAY
+ 
+3.MINIMUM
+
+Enter your choice :
+3
+*********MINIMUM************
+Minimum cost connection is1 -> 1  with charge : 999
+The minimum total cost of connections of all branches is: 999
+*/
