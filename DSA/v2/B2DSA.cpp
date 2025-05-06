@@ -187,3 +187,58 @@ cin>>ans;
 }while(ans=='y');
 	return 0;
 }
+
+
+
+/*
+ MAIN MENU 
+ 1.Create 
+ 2.Insert 
+ 3.Display 
+ 4.Findmin 
+ 5.Findmax  
+ 6.Find  
+ 7.Height 
+ 8.Swap
+
+ Enter your choice : 1
+Enter total number of nodes : 2
+Enter Data : 3
+Enter Data : 4
+
+ 
+ Go to Main Menu ??(y or n) : y
+ 
+ MAIN MENU 
+ 1.Create 
+ 2.Insert 
+ 3.Display 
+ 4.Findmin 
+ 5.Findmax  
+ 6.Find  
+ 7.Height 
+ 8.Swap
+
+ Enter your choice : 3
+THE BST TREE in INORDER : 
+ 3 4 
+ 
+ Go to Main Menu ??(y or n) : 
+y
+ 
+ MAIN MENU 
+ 1.Create 
+ 2.Insert 
+ 3.Display 
+ 4.Findmin 
+ 5.Findmax  
+ 6.Find  
+ 7.Height 
+ 8.Swap
+
+ Enter your choice : 
+7
+ Height of BST tree is : 1
+ 
+ Go to Main Menu ??(y or n) : 
+*/
