@@ -1,7 +1,16 @@
 # codes
-![Visitor Count](https://profile-counter.glitch.me/getsomesleepbro_codes/count.svg)
+![Hello; World!](https://raw.githubusercontent.com/sagar-viradiya/sagar-viradiya/master/resources/banner.png)
 
 <br><br>
+
+## Semester 5 | TE 
+
+### ▶️ [Computer Networks and Security | CNS](./CNS)
+#### Reference:
+  - https://github.com/shxntanu/TE-Lab-Assignments
+  - https://github.com/ashawe/CNL
+
+<br><br><hr><br><br>
 
 ## Semester 4 | SE 
 
