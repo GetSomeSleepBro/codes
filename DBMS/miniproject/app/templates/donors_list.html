@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Donors</h1>
+<p><a class="btn" href="/donors/new">Add Donor</a></p>
+<table class="table">
+  <tr><th>Name</th><th>Blood Group</th><th>Actions</th></tr>
+  {% for d in donors %}
+    <tr>
+      <td>{{ d.name }}</td>
+      <td>{{ d.blood_group }}{{ d.rh }}</td>
+      <td>
+        <form method="post" action="/donors/{{ d.id }}/delete" onsubmit="return confirm('Delete donor?');">
+          <button class="link">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  {% if not donors %}
+    <tr><td colspan="3">No donors yet.</td></tr>
+  {% endif %}
+</table>
+{% endblock %}
+

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Request #{{ req.id }}</h1>
+<div class="grid two">
+  <div class="card">
+    <div><strong>Hospital:</strong> {{ req.hospital.name }}</div>
+    <div><strong>Recipient Type:</strong> {{ req.blood_group }}{{ req.rh }}</div>
+    <div><strong>Units Needed:</strong> {{ req.units_needed }}</div>
+    <div><strong>Status:</strong> {{ req.status }}</div>
+    <form method="post" action="/requests/{{ req.id }}/allocate">
+      <button class="btn" {% if req.status == 'fulfilled' %}disabled{% endif %}>Allocate Now</button>
+      <a class="btn secondary" href="/requests/">Back</a>
+    </form>
+  </div>
+  <div class="card">
+    <h3>Issues</h3>
+    <table class="table">
+      <tr><th>Unit</th><th>Type</th><th>Issued On</th></tr>
+      {% for i in issues %}
+        <tr>
+          <td>#{{ i.inventory_unit_id }}</td>
+          <td>{{ i.inventory_unit.blood_group }}{{ i.inventory_unit.rh }}</td>
+          <td>{{ i.issue_date }}</td>
+        </tr>
+      {% endfor %}
+      {% if not issues %}
+        <tr><td colspan="3">No units issued yet.</td></tr>
+      {% endif %}
+    </table>
+  </div>
+</div>
+{% endblock %}
+

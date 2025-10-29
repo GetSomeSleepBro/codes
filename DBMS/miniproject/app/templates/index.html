@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Dashboard</h1>
+<div class="grid">
+  <div class="card">
+    <div class="metric">{{ donors_count }}</div>
+    <div class="label">Donors</div>
+  </div>
+  <div class="card">
+    <div class="metric">{{ donations_count }}</div>
+    <div class="label">Donations</div>
+  </div>
+  <div class="card">
+    <div class="metric">{{ available_units }}</div>
+    <div class="label">Available Units</div>
+  </div>
+  <div class="card">
+    <div class="metric">{{ open_requests }}</div>
+    <div class="label">Open Requests</div>
+  </div>
+  
+</div>
+{% endblock %}
+

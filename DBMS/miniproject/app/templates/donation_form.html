@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>New Donation</h1>
+<form method="post" class="form">
+  <label>Donor
+    <select name="donor_id" required>
+      {% for donor in donors %}
+        <option value="{{ donor.id }}">{{ donor.name }} ({{ donor.blood_group }}{{ donor.rh }})</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Date
+    <input name="date" type="date">
+  </label>
+  <label>Volume (ml)
+    <input name="volume_ml" type="number" value="450">
+  </label>
+  <label>Test Status
+    <select name="test_status">
+      <option value="passed" selected>passed</option>
+      <option value="pending">pending</option>
+      <option value="failed">failed</option>
+    </select>
+  </label>
+  <button class="btn">Save</button>
+  <a href="/donations/" class="btn secondary">Cancel</a>
+</form>
+{% endblock %}

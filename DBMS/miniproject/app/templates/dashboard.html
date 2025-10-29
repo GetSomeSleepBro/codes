@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<div class="tabs">
+  <input type="radio" id="tab-overview" name="tab" checked>
+  <label for="tab-overview">Overview</label>
+  <input type="radio" id="tab-donors" name="tab">
+  <label for="tab-donors">Donors</label>
+  <input type="radio" id="tab-donations" name="tab">
+  <label for="tab-donations">Donations</label>
+  <input type="radio" id="tab-inventory" name="tab">
+  <label for="tab-inventory">Inventory</label>
+  <input type="radio" id="tab-requests" name="tab">
+  <label for="tab-requests">Requests</label>
+
+  <div class="tab-content" id="content-overview">
+    <div class="grid">
+      <div class="card"><div class="metric">{{ metrics.donors_count }}</div><div class="label">Donors</div></div>
+      <div class="card"><div class="metric">{{ metrics.donations_count }}</div><div class="label">Donations</div></div>
+      <div class="card"><div class="metric">{{ metrics.available_units }}</div><div class="label">Available Units</div></div>
+      <div class="card"><div class="metric">{{ metrics.open_requests }}</div><div class="label">Open Requests</div></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="content-donors">
+    <div class="grid two">
+      <div class="card">
+        <h3>Add Donor</h3>
+        <form method="post" action="/donors/new" class="form">
+          <input type="hidden" name="next" value="/">
+          <label>Name<input name="name" required></label>
+          <label>Blood Group
+            <select name="blood_group" required>
+              <option value="A">A</option><option value="B">B</option><option value="AB">AB</option><option value="O">O</option>
+            </select>
+          </label>
+          <label>Rh
+            <select name="rh" required>
+              <option value="+">+</option><option value="-">-</option>
+            </select>
+          </label>
+          <button class="btn">Save</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Donors</h3>
+        <table class="table">
+          <tr><th>Name</th><th>Type</th><th></th></tr>
+          {% for d in donors %}
+            <tr>
+              <td>{{ d.name }}</td>
+              <td>{{ d.blood_group }}{{ d.rh }}</td>
+              <td>
+                <form method="post" action="/donors/{{ d.id }}/delete" onsubmit="return confirm('Delete donor?');">
+                  <input type="hidden" name="next" value="/">
+                  <button class="link">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="content-donations">
+    <div class="grid two">
+      <div class="card">
+        <h3>Record Donation</h3>
+        <form method="post" action="/donations/new" class="form">
+          <input type="hidden" name="next" value="/">
+          <label>Donor
+            <select name="donor_id" required>
+              {% for donor in donors %}
+                <option value="{{ donor.id }}">{{ donor.name }} ({{ donor.blood_group }}{{ donor.rh }})</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>Date<input type="date" name="date"></label>
+          <label>Volume (ml)<input type="number" name="volume_ml" value="450"></label>
+          <label>Test Status
+            <select name="test_status">
+              <option value="passed" selected>passed</option>
+              <option value="pending">pending</option>
+              <option value="failed">failed</option>
+            </select>
+          </label>
+          <button class="btn">Save</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Recent Donations</h3>
+        <table class="table">
+          <tr><th>Date</th><th>Donor</th><th>Volume</th><th>Status</th><th>Update</th></tr>
+          {% for d in donations %}
+            <tr>
+              <td>{{ d.date }}</td>
+              <td>{{ donors_map[d.donor_id].name }}</td>
+              <td>{{ d.volume_ml }}</td>
+              <td>{{ d.test_status }}</td>
+              <td>
+                <form method="post" action="/donations/{{ d.id }}/update_status" class="form-inline">
+                  <input type="hidden" name="next" value="/">
+                  <select name="test_status">
+                    <option value="passed" {% if d.test_status == 'passed' %}selected{% endif %}>passed</option>
+                    <option value="pending" {% if d.test_status == 'pending' %}selected{% endif %}>pending</option>
+                    <option value="failed" {% if d.test_status == 'failed' %}selected{% endif %}>failed</option>
+                  </select>
+                  <button class="btn secondary">Update</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="content-inventory">
+    <div class="card">
+      <h3>Inventory</h3>
+      <table class="table">
+        <tr><th>ID</th><th>Type</th><th>Expiry</th><th>Status</th><th>Volume</th></tr>
+        {% for i in inventory %}
+          <tr><td>#{{ i.id }}</td><td>{{ i.blood_group }}{{ i.rh }}</td><td>{{ i.expiry_date }}</td><td>{{ i.status }}</td><td>{{ i.volume_ml }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-content" id="content-requests">
+    <div class="grid two">
+      <div class="card">
+        <h3>New Request</h3>
+        <form method="post" action="/requests/new" class="form">
+          <input type="hidden" name="next" value="/">
+          <label>Existing Hospital
+            <select name="hospital_id">
+              <option value="">-- none --</option>
+              {% for h in hospitals %}<option value="{{ h.id }}">{{ h.name }}</option>{% endfor %}
+            </select>
+          </label>
+          <div class="hint">OR create a new hospital below</div>
+          <label>Hospital Name<input name="hospital_name"></label>
+          <label>Recipient Blood Group
+            <select name="blood_group" required>
+              <option value="A">A</option><option value="B">B</option><option value="AB">AB</option><option value="O">O</option>
+            </select>
+          </label>
+          <label>Rh
+            <select name="rh" required>
+              <option value="+">+</option><option value="-">-</option>
+            </select>
+          </label>
+          <label>Units Needed<input type="number" min="1" name="units_needed" value="1"></label>
+          <button class="btn">Create</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Requests</h3>
+        <table class="table">
+          <tr><th>ID</th><th>Hospital</th><th>Type</th><th>Units</th><th>Compat Avail</th><th>Status</th><th>Action</th></tr>
+          {% for r in requests %}
+            <tr>
+              <td>#{{ r.id }}</td>
+              <td>{{ r.hospital.name }}</td>
+              <td>{{ r.blood_group }}{{ r.rh }}</td>
+              <td>{{ r.units_needed }}</td>
+              <td>{{ compat_available[r.id] }}</td>
+              <td>{{ r.status }}</td>
+              <td>
+                <form method="post" action="/requests/{{ r.id }}/allocate">
+                  <input type="hidden" name="next" value="/">
+                  <button class="btn" {% if r.status == 'fulfilled' or compat_available[r.id] == 0 %}disabled{% endif %}>Allocate</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>New Request</h1>
+<form method="post" class="form">
+  <label>Existing Hospital
+    <select name="hospital_id">
+      <option value="">-- none --</option>
+      {% for h in hospitals %}
+        <option value="{{ h.id }}">{{ h.name }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <div class="hint">OR create a new hospital below</div>
+  <label>Hospital Name
+    <input name="hospital_name" placeholder="New Hospital">
+  </label>
+  <label>Recipient Blood Group
+    <select name="blood_group" required>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="AB">AB</option>
+      <option value="O">O</option>
+    </select>
+  </label>
+  <label>Rh
+    <select name="rh" required>
+      <option value="+">+</option>
+      <option value="-">-</option>
+    </select>
+  </label>
+  <label>Units Needed
+    <input name="units_needed" type="number" min="1" value="1" required>
+  </label>
+  <button class="btn">Create</button>
+  <a class="btn secondary" href="/requests/">Cancel</a>
+</form>
+{% endblock %}
+

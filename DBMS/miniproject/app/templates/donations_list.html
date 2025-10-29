@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Donations</h1>
+<p><a class="btn" href="/donations/new">Record Donation</a></p>
+<table class="table">
+  <tr><th>Date</th><th>Donor</th><th>Volume (ml)</th><th>Test Status</th><th>Update</th></tr>
+  {% for d in donations %}
+    <tr>
+      <td>{{ d.date }}</td>
+      <td>{{ donors[d.donor_id].name }}</td>
+      <td>{{ d.volume_ml }}</td>
+      <td>{{ d.test_status }}</td>
+      <td>
+        <form method="post" action="/donations/{{ d.id }}/update_status" class="form-inline">
+          <input type="hidden" name="next" value="/donations/">
+          <select name="test_status">
+            <option value="passed" {% if d.test_status == 'passed' %}selected{% endif %}>passed</option>
+            <option value="pending" {% if d.test_status == 'pending' %}selected{% endif %}>pending</option>
+            <option value="failed" {% if d.test_status == 'failed' %}selected{% endif %}>failed</option>
+          </select>
+          <button class="btn secondary">Update</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  {% if not donations %}
+    <tr><td colspan="5">No donations yet.</td></tr>
+  {% endif %}
+</table>
+{% endblock %}

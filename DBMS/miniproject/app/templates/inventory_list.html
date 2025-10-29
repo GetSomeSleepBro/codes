@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Inventory</h1>
+<table class="table">
+  <tr><th>ID</th><th>Type</th><th>Expiry</th><th>Status</th><th>Volume</th></tr>
+  {% for i in items %}
+    <tr>
+      <td>#{{ i.id }}</td>
+      <td>{{ i.blood_group }}{{ i.rh }}</td>
+      <td>{{ i.expiry_date }}</td>
+      <td>{{ i.status }}</td>
+      <td>{{ i.volume_ml }}</td>
+    </tr>
+  {% endfor %}
+  {% if not items %}
+    <tr><td colspan="5">No inventory units.</td></tr>
+  {% endif %}
+</table>
+{% endblock %}
+
