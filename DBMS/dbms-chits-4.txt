@@ -1,0 +1,62 @@
+DECLARE
+    v_roll_no       VARCHAR2(20);
+    v_book_name     VARCHAR2(100);
+    v_date_issue    DATE;
+    v_status        CHAR(1);
+    v_days          NUMBER;
+    v_fine_amt      NUMBER(10,2);
+    e_no_borrower   EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_no_borrower, -01403);  -- For NO_DATA_FOUND
+BEGIN
+    -- Accept input from user
+    v_roll_no := '&Roll_no';
+    v_book_name := '&Name_of_Book';
+    
+    -- Fetch date of issue and status
+    SELECT date_of_issue, status
+    INTO v_date_issue, v_status
+    FROM borrower
+    WHERE roll_no = v_roll_no AND name_of_book = v_book_name;
+    
+    -- Check if status is issued (I), otherwise raise exception or handle
+    IF v_status != 'I' THEN
+        RAISE e_no_borrower;
+    END IF;
+    
+    -- Calculate number of days (truncated to integer)
+    v_days := TRUNC(SYSDATE - v_date_issue);
+    
+    -- Control structure for fine calculation
+    IF v_days > 30 THEN
+        v_fine_amt := v_days * 50;
+    ELSIF v_days <= 30 AND v_days >= 0 THEN  -- Covers <30 and 15-30 as Rs 5/day
+        v_fine_amt := v_days * 5;
+    ELSE
+        v_fine_amt := 0;  -- Negative days? Invalid, but set to 0
+    END IF;
+    
+    -- Update status to Returned (R)
+    UPDATE borrower
+    SET status = 'R'
+    WHERE roll_no = v_roll_no AND name_of_book = v_book_name;
+    
+    -- If fine condition is true (fine > 0), insert into fine table
+    IF v_fine_amt > 0 THEN
+        INSERT INTO fine (roll_no, date, amt)
+        VALUES (v_roll_no, SYSDATE, v_fine_amt);
+    END IF;
+    
+    -- Commit changes
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('Book returned successfully. Fine amount: Rs ' || v_fine_amt);
+    
+EXCEPTION
+    WHEN e_no_borrower THEN
+        DBMS_OUTPUT.PUT_LINE('Error: No active borrow record found for Roll_no ' || v_roll_no || ' and book ' || v_book_name || '.');
+        ROLLBACK;
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Unexpected error: ' || SQLERRM);
+        ROLLBACK;
+END;
+/
