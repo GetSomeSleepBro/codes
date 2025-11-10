@@ -1,71 +1,64 @@
--- 10 SQL queries: joins, subqueries, views
--- Quick guide to joins:
--- - INNER: only matching rows
--- - LEFT: keep all left rows (fill missing right with NULL)
--- - RIGHT: keep all right rows
--- - FULL: keep both sides
--- - CROSS: Cartesian product
+-- Create tables
+CREATE TABLE Student2 (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(10),
+    age INT,
+    dept VARCHAR(10)
+);
 
--- 1) INNER JOIN: only matching student/book with open issues
-SELECT s.roll_no, s.name, b.title, i.date_of_issue, i.due_date
-FROM issue i
-JOIN student s ON s.student_id = i.student_id
-JOIN book b    ON b.book_id    = i.book_id
-WHERE i.status='I';
+CREATE TABLE Enrollment2 (
+    enroll_id INT PRIMARY KEY,
+    student_id INT,
+    course_name VARCHAR(10),
+    marks INT,
+    FOREIGN KEY (student_id) REFERENCES Student2(student_id)
+);
 
--- 2) LEFT JOIN: lists all students, issues may be NULL
-SELECT s.roll_no, s.name, i.issue_id
-FROM student s
-LEFT JOIN issue i ON i.student_id = s.student_id AND i.status='I'
-ORDER BY s.roll_no;
+-- Insert sample data
+INSERT INTO Student2 VALUES (1, 'Amit', 21, 'CSE');
+INSERT INTO Student2 VALUES (2, 'Sneha', 20, 'IT');
+INSERT INTO Student2 VALUES (3, 'Rahul', 22, 'ECE');
+INSERT INTO Student2 VALUES (4, 'Pooja', 21, 'CSE');
 
--- 3) RIGHT JOIN: lists all books, issues may be NULL
-SELECT i.issue_id, b.title
-FROM issue i
-RIGHT JOIN book b ON b.book_id = i.book_id AND i.status='I'
-ORDER BY b.title;
+INSERT INTO Enrollment2 VALUES (101, 1, 'SQL', 85);
+INSERT INTO Enrollment2 VALUES (102, 2, 'SQL', 78);
+INSERT INTO Enrollment2 VALUES (103, 3, 'Java', 90);
+INSERT INTO Enrollment2 VALUES (104, 4, 'Python', 88);
+INSERT INTO Enrollment2 VALUES (105, 1, 'Java', 82);
+INSERT INTO Enrollment2 VALUES (106, 4, 'SQL', 95);
 
--- 4) FULL OUTER JOIN: keeps all from both sides
-SELECT NVL(s.roll_no,'-') AS roll_no, b.title, i.issue_id
-FROM issue i
-FULL OUTER JOIN student s ON s.student_id = i.student_id
-FULL OUTER JOIN book b    ON b.book_id    = i.book_id
-ORDER BY 3 NULLS LAST;
+-- 1. Display all students and their enrolled courses (LEFT JOIN)
+SELECT s.name, e.course_name
+FROM Student2 s
+LEFT JOIN Enrollment2 e ON s.student_id = e.student_id
+ORDER BY s.name;
 
--- 5) CROSS JOIN: pairs each student with one picked book
-SELECT s.roll_no, b.title
-FROM student s CROSS JOIN (
-  SELECT b.* FROM book b WHERE ROWNUM <= 1
-) b;
-
--- 6) Subquery (IN): filter by book borrowed
-SELECT roll_no, name FROM student
+-- 2. List students who have scored more than 80 marks in any course (Subquery)
+SELECT name
+FROM Student2
 WHERE student_id IN (
-  SELECT i.student_id FROM issue i JOIN book b ON b.book_id = i.book_id
-  WHERE b.title = 'Database Systems'
+    SELECT student_id
+    FROM Enrollment2
+    WHERE marks > 80
 );
 
--- 7) EXISTS: check if a related overdue row exists
-SELECT s.roll_no, s.name
-FROM student s
-WHERE EXISTS (
-  SELECT 1 FROM issue i
-  WHERE i.student_id = s.student_id AND i.status='I' AND i.due_date < TRUNC(SYSDATE)
-);
+-- 3. Display the highest marks obtained in the SQL course (Aggregate + Subquery)
+SELECT MAX(marks) AS Highest_SQL_Marks
+FROM Enrollment2
+WHERE course_name = 'SQL';
 
--- 8) Scalar subquery: compute days since issue
-SELECT i.issue_id,
-       (SELECT TRUNC(SYSDATE - i.date_of_issue) FROM dual) AS days_since_issue
-FROM issue i
-WHERE i.status='I';
+-- 4. List all departments and average marks scored by their students (JOIN + GROUP BY)
+SELECT s.dept, AVG(e.marks) AS Avg_Marks
+FROM Student2 s
+JOIN Enrollment2 e ON s.student_id = e.student_id
+GROUP BY s.dept;
 
--- 9) View usage: read from saved SELECT
-SELECT * FROM vw_overdue_issues;
+-- Bonus: CREATE VIEW for reusable query (e.g., High Performers)
+CREATE OR REPLACE VIEW v_high_performers AS
+SELECT s.name, e.course_name, e.marks
+FROM Student2 s
+JOIN Enrollment2 e ON s.student_id = e.student_id
+WHERE e.marks > 85;
 
--- 10) WITH (CTE): precompute counts then select
-WITH student_issue AS (
-  SELECT s.student_id, s.roll_no, s.name, COUNT(*) AS cnt
-  FROM student s LEFT JOIN issue i ON i.student_id = s.student_id AND i.status='I'
-  GROUP BY s.student_id, s.roll_no, s.name
-)
-SELECT roll_no, name, cnt FROM student_issue WHERE cnt >= 0 ORDER BY cnt DESC;
+-- Query the view
+SELECT * FROM v_high_performers;
