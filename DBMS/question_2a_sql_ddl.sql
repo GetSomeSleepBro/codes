@@ -1,77 +1,61 @@
--- Oracle SQL DDL: library schema objects
--- Short guide:
--- - Sequences: auto-generate numeric IDs
--- - Tables: core data with constraints for safety
--- - Indexes: speed up lookups
--- - View: handy saved SELECT
--- - Synonym: shorter name/alias
-
--- Sequences
--- Sequences (ID generators)
-CREATE SEQUENCE seq_student START WITH 1 INCREMENT BY 1 NOCACHE; -- for STUDENT.student_id
-CREATE SEQUENCE seq_book    START WITH 1 INCREMENT BY 1 NOCACHE; -- for BOOK.book_id
-CREATE SEQUENCE seq_issue   START WITH 1 INCREMENT BY 1 NOCACHE; -- for ISSUE.issue_id
-CREATE SEQUENCE seq_fine    START WITH 1 INCREMENT BY 1 NOCACHE; -- for FINE.fine_id
-
--- Tables
--- Core tables
-CREATE TABLE student (
-  student_id   NUMBER       PRIMARY KEY,
-  roll_no      VARCHAR2(20) NOT NULL UNIQUE,
-  name         VARCHAR2(100) NOT NULL,
-  email        VARCHAR2(200),
-  CONSTRAINT ck_student_email CHECK (email IS NULL OR INSTR(email,'@') > 0) -- simple email check
+-- 1. TABLE with PRIMARY KEY, NOT NULL, DEFAULT, CHECK constraints
+CREATE TABLE employee (
+    emp_id      NUMBER(5)      PRIMARY KEY,
+    emp_name    VARCHAR2(10)   NOT NULL,
+    job_name    VARCHAR2(10)   NOT NULL,
+    hire_date   DATE           DEFAULT SYSDATE,
+    salary      DECIMAL(6,2)   CHECK (salary >= 0),
+    commission  DECIMAL(6,2)   NULL,
+    dept_id     NUMBER(4)      REFERENCES department(dept_id)  -- Foreign Key
 );
 
-CREATE TABLE book (
-  book_id          NUMBER        PRIMARY KEY,
-  title            VARCHAR2(200) NOT NULL,
-  author           VARCHAR2(100) NOT NULL,
-  published_year   NUMBER(4),
-  available_copies NUMBER        DEFAULT 0 NOT NULL,
-  CONSTRAINT ck_book_year CHECK ( -- allow null or realistic years
-    published_year IS NULL OR (published_year BETWEEN 1900 AND EXTRACT(YEAR FROM SYSDATE))
-  ),
-  CONSTRAINT ck_book_copies CHECK (available_copies >= 0) -- no negative stock
+-- 2. Supporting DEPARTMENT table for FOREIGN KEY
+CREATE TABLE department (
+    dept_id     NUMBER(4)      PRIMARY KEY,
+    dept_name   VARCHAR2(20)   UNIQUE NOT NULL
 );
 
-CREATE TABLE issue (
-  issue_id      NUMBER      PRIMARY KEY,
-  student_id    NUMBER      NOT NULL,
-  book_id       NUMBER      NOT NULL,
-  date_of_issue DATE        DEFAULT SYSDATE NOT NULL,
-  due_date      DATE        NOT NULL,
-  status        CHAR(1)     DEFAULT 'I' NOT NULL,
-  CONSTRAINT fk_issue_student FOREIGN KEY(student_id) REFERENCES student(student_id), -- who
-  CONSTRAINT fk_issue_book    FOREIGN KEY(book_id)    REFERENCES book(book_id),      -- what
-  CONSTRAINT ck_issue_status  CHECK (status IN ('I','R'))                               -- issued/returned
-);
+-- 3. SEQUENCE for auto-generating emp_id
+CREATE SEQUENCE emp_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE;
 
-CREATE TABLE fine (
-  fine_id   NUMBER    PRIMARY KEY,
-  student_id NUMBER   NOT NULL,
-  issue_id   NUMBER   NOT NULL,
-  fine_date  DATE     DEFAULT SYSDATE NOT NULL,
-  amount     NUMBER(10,2) NOT NULL,
-  CONSTRAINT ck_fine_amt CHECK (amount >= 0), -- fine cannot be negative
-  CONSTRAINT fk_fine_student FOREIGN KEY(student_id) REFERENCES student(student_id),
-  CONSTRAINT fk_fine_issue   FOREIGN KEY(issue_id)   REFERENCES issue(issue_id) ON DELETE CASCADE
-);
+-- 4. VIEW - Shows employee details with department name
+CREATE OR REPLACE VIEW v_emp_dept AS
+SELECT e.emp_id, e.emp_name, e.job_name, e.salary, d.dept_name
+FROM employee e
+JOIN department d ON e.dept_id = d.dept_id;
 
--- Indexes
--- Helpful indexes
-CREATE INDEX idx_issue_student ON issue(student_id); -- filter by student quickly
-CREATE INDEX idx_issue_status  ON issue(status);     -- filter by open/closed issues
+-- 5. INDEX - For faster search on salary
+CREATE INDEX idx_emp_salary ON employee(salary);
 
--- View: overdue issues (due_date before today and not returned)
--- View of overdue (past due) open issues
-CREATE OR REPLACE VIEW vw_overdue_issues AS
-SELECT i.issue_id, s.roll_no, s.name AS student_name, b.title AS book_title,
-       i.date_of_issue, i.due_date
-FROM issue i
-JOIN student s ON s.student_id = i.student_id
-JOIN book b    ON b.book_id    = i.book_id
-WHERE i.status = 'I' AND i.due_date < TRUNC(SYSDATE);
+-- 6. COMPOSITE INDEX - On job_name and hire_date
+CREATE INDEX idx_emp_job_hire ON employee(job_name, hire_date);
 
--- Synonym (private) for book
-CREATE SYNONYM book_syn FOR book; -- shorter alias
+-- 7. SYNONYM - Simplified name for the view
+CREATE SYNONYM empview FOR v_emp_dept;
+
+-- 8. Insert using SEQUENCE and test constraints
+INSERT INTO department VALUES (10, 'IT');
+INSERT INTO department VALUES (20, 'HR');
+
+INSERT INTO employee (emp_id, emp_name, job_name, dept_id, salary)
+VALUES (emp_id_seq.NEXTVAL, 'Amit', 'Manager', 10, 50000.00);
+
+-- This will fail: salary negative
+-- INSERT INTO employee VALUES (emp_id_seq.NEXTVAL, 'Raj', 'Clerk', SYSDATE, -100, NULL, 20);
+
+-- This will fail: dept_id not in department
+-- INSERT INTO employee VALUES (emp_id_seq.NEXTVAL, 'Priya', 'Analyst', SYSDATE, 45000, NULL, 99);
+
+-- 9. Query the view using synonym
+SELECT * FROM empview;
+
+-- 10. Drop objects (optional cleanup)
+-- DROP SYNONYM empview;
+-- DROP INDEX idx_emp_salary;
+-- DROP VIEW v_emp_dept;
+-- DROP SEQUENCE emp_id_seq;
+-- DROP TABLE employee;
+-- DROP TABLE department;
