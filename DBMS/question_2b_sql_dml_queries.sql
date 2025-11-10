@@ -1,63 +1,36 @@
--- 10 SQL DML queries against the library schema
--- Quick guide:
--- - INSERT: add rows
--- - UPDATE: modify rows
--- - SELECT: read rows
--- - DELETE: remove rows
+-- 1. Insert single record
+INSERT INTO Emp VALUES (100, 'Amit Sharma', '2023-06-15', 75000, 10);
 
--- 1) Insert a student
-INSERT INTO student(student_id, roll_no, name, email)
-VALUES (seq_student.NEXTVAL, 'CS-001', 'Alice', 'alice@example.com');
+-- 2. Insert multiple rows
+INSERT INTO Emp VALUES
+(101, 'Priya Singh', '2023-07-20', 82000, 20),
+(102, 'Rohan Patel', '2023-08-10', 65000, 10),
+(103, 'Neha Gupta', '2023-09-05', 90000, 30),
+(104, 'Vikram Rao', '2023-05-12', 78000, 20);
 
--- 2) Insert another student
-INSERT INTO student(student_id, roll_no, name, email)
-VALUES (seq_student.NEXTVAL, 'CS-002', 'Bob', 'bob@example.com');
+-- 3. Display all records
+SELECT * FROM Emp;
 
--- 3) Insert books
-INSERT INTO book(book_id, title, author, published_year, available_copies)
-VALUES (seq_book.NEXTVAL, 'Database Systems', 'Elmasri', 2016, 3);
-INSERT INTO book(book_id, title, author, published_year, available_copies)
-VALUES (seq_book.NEXTVAL, 'Operating Systems', 'Silberschatz', 2018, 2);
+-- 4. Display records where salary > 8000
+SELECT * FROM Emp WHERE Salary > 8000;
 
--- 4) Issue a book to Alice for 14 days (I = issued)
-INSERT INTO issue(issue_id, student_id, book_id, date_of_issue, due_date, status)
-SELECT seq_issue.NEXTVAL, s.student_id, b.book_id, TRUNC(SYSDATE), TRUNC(SYSDATE)+14, 'I'
-FROM student s JOIN book b ON b.title='Database Systems'
-WHERE s.roll_no='CS-001' AND ROWNUM=1;
+-- 5. Display records in ascending order of joining date
+SELECT * FROM Emp ORDER BY Joiningdate ASC;
 
--- 5) Reduce available copies after issuing (simple stock decrease)
-UPDATE book SET available_copies = available_copies - 1
-WHERE title = 'Database Systems' AND available_copies > 0;
+-- 6. Update salary of employee id=100 to 50000
+UPDATE Emp SET Salary = 50000 WHERE Id = 100;
 
--- 6) List all current issues with student and book (join three tables)
-SELECT i.issue_id, s.roll_no, s.name, b.title, i.date_of_issue, i.due_date
-FROM issue i
-JOIN student s ON s.student_id = i.student_id
-JOIN book b    ON b.book_id    = i.book_id
-WHERE i.status = 'I'
-ORDER BY i.due_date;
+-- 7. Remove record of employee id=106
+DELETE FROM Emp WHERE Id = 106;
 
--- 7) Mark a return for an issue (set status to R)
-UPDATE issue SET status='R' WHERE issue_id = (
-  SELECT MIN(issue_id) FROM issue WHERE status='I'
-);
+-- 8. Use DISTINCT to display unique salaries
+SELECT DISTINCT Salary FROM Emp;
 
--- 8) Insert a fine for a returned issue (example flat 50)
-INSERT INTO fine(fine_id, student_id, issue_id, fine_date, amount)
-SELECT seq_fine.NEXTVAL, i.student_id, i.issue_id, TRUNC(SYSDATE), 50
-FROM issue i
-WHERE i.status='R' AND ROWNUM=1;
+-- 9. Display minimum and maximum salary
+SELECT MIN(Salary) AS Min_Salary, MAX(Salary) AS Max_Salary FROM Emp;
 
--- 9) Aggregate: count issues per student (GROUP BY)
-SELECT s.roll_no, s.name, COUNT(*) AS issue_count
-FROM issue i JOIN student s ON s.student_id = i.student_id
-GROUP BY s.roll_no, s.name
-HAVING COUNT(*) >= 1
-ORDER BY issue_count DESC;
+-- 10. Display total number of employees
+SELECT COUNT(*) AS Total_Employees FROM Emp;
 
--- 10) Delete a student with no issues (NOT EXISTS)
-DELETE FROM student s
-WHERE NOT EXISTS (
-  SELECT 1 FROM issue i WHERE i.student_id = s.student_id
-)
-AND s.roll_no='CS-002';
+-- 11. Display sum of salaries of dept=10
+SELECT SUM(Salary) AS Total_Salary_Dept10 FROM Emp WHERE Dept = 10;
