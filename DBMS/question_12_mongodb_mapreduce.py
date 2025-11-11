@@ -14,18 +14,23 @@ def get_collection():
     return client[dbname][collname]
 
 
-def main():
-    """Compute totals per age via mapReduce or aggregation."""
-    c = get_collection()
+def setup_data(c):
+    """Insert sample data if collection is empty."""
     if c.count_documents({}) == 0:
+        print("--- Inserting sample documents ---")
         c.insert_many([
             {"roll": 1, "name": "Riya", "age": 20, "marks": 82},
             {"roll": 2, "name": "Dev",  "age": 21, "marks": 76},
             {"roll": 3, "name": "Neha", "age": 20, "marks": 91},
             {"roll": 4, "name": "Avi",  "age": 22, "marks": 70},
         ])
+        print("Sample documents inserted.")
 
+
+def run_map_reduce(c):
+    """Compute totals per age via mapReduce."""
     db = c.database
+    print("\n--- Running Map-Reduce for total marks per age ---")
     try:
         res = db.command(
             "mapReduce",
@@ -41,12 +46,26 @@ def main():
         )
         print(res.get("results"))
     except Exception as e:
-        # Fallback: $group + $sum does the same
-        agg = list(c.aggregate([
-            {"$group": {"_id": "$age", "total_marks": {"$sum": "$marks"}}},
-            {"$sort": {"_id": 1}},
-        ]))
-        print(agg)
+        print(f"Map-reduce failed: {e}. Trying aggregation fallback.")
+        run_aggregation_fallback(c)
+
+
+def run_aggregation_fallback(c):
+    """Compute totals per age via aggregation as a fallback."""
+    print("\n--- Running Aggregation for total marks per age (fallback) ---")
+    # Fallback: $group + $sum does the same
+    agg = list(c.aggregate([
+        {"$group": {"_id": "$age", "total_marks": {"$sum": "$marks"}}},
+        {"$sort": {"_id": 1}},
+    ]))
+    print(agg)
+
+
+def main():
+    """Compute totals per age via mapReduce or aggregation."""
+    c = get_collection()
+    setup_data(c)
+    run_map_reduce(c)
 
 
 if __name__ == "__main__":
