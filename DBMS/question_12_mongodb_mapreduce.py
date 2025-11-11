@@ -70,3 +70,71 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+# //----------------------------------------------------
+# // STEP 1: Create / Switch to Database
+# //----------------------------------------------------
+# use shopDB
+# // Output: switched to db shopDB
+
+
+# //----------------------------------------------------
+# // STEP 2: Create a Collection and Insert Documents
+# //----------------------------------------------------
+# // Collection name: sales
+# // Each document represents one sales transaction
+# db.sales.insertMany([
+#   { _id: 1, product: "Pen",    category: "Stationery", price: 10,  quantity: 5 },
+#   { _id: 2, product: "Book",   category: "Stationery", price: 50,  quantity: 2 },
+#   { _id: 3, product: "Pencil", category: "Stationery", price: 5,   quantity: 10 },
+#   { _id: 4, product: "Mouse",  category: "Electronics", price: 500, quantity: 1 },
+#   { _id: 5, product: "Keyboard", category: "Electronics", price: 800, quantity: 2 },
+#   { _id: 6, product: "Pen",    category: "Stationery", price: 10,  quantity: 3 },
+#   { _id: 7, product: "Mouse",  category: "Electronics", price: 500, quantity: 2 }
+# ])
+# // Output: acknowledged: true
+
+
+# //----------------------------------------------------
+# // STEP 3: Define the MAP Function
+# //----------------------------------------------------
+# // Emits (key, value) pairs.
+# // key   → category
+# // value → total amount (price * quantity)
+# var mapFunction = function() {
+#   emit(this.category, this.price * this.quantity);
+# };
+
+
+# //----------------------------------------------------
+# // STEP 4: Define the REDUCE Function
+# //----------------------------------------------------
+# // Combines all values (total sales amounts) for the same category.
+# var reduceFunction = function(keyCategory, values) {
+#   return Array.sum(values);   // sum of all sales amounts per category
+# };
+
+
+# //----------------------------------------------------
+# // STEP 5: Execute MAP-REDUCE Operation
+# //----------------------------------------------------
+# // Output collection will store summarized results
+# db.sales.mapReduce(
+#   mapFunction,
+#   reduceFunction,
+#   { out: "total_sales" }
+# );
+
+
+# //----------------------------------------------------
+# // STEP 6: Display Results
+# //----------------------------------------------------
+# db.total_sales.find().pretty()
+# // Output will show total sales per category
+
+
+# //----------------------------------------------------
+# // END OF MAP-REDUCE PRACTICAL
+# //----------------------------------------------------
