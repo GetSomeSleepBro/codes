@@ -70,3 +70,31 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+
+# //----------------------------------------------------
+# // MONGOSH EQUIVALENT COMMANDS
+# //----------------------------------------------------
+
+# // Switch to the database
+# use labdb
+
+# // ADD a new book
+# db.books.insertOne({
+#   title: "The Great Gatsby",
+#   author: "F. Scott Fitzgerald",
+#   price: 12.99
+# })
+
+# // LIST all books, sorted by title, without the _id field
+# db.books.find({}, { _id: 0 }).sort({ title: 1 })
+
+# // UPDATE the price of a book
+# db.books.updateOne(
+#   { title: "The Great Gatsby" },
+#   { $set: { price: 14.99 } }
+# )
+
+# // DELETE a book by its title
+# db.books.deleteOne({ title: "The Great Gatsby" })
