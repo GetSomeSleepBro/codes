@@ -1,0 +1,49 @@
+def main():
+    # Taking the number of processes
+    n = int(input("Enter the number of processes: "))
+    # Arrays to store process details
+    p = [0] * 10  # Process IDs
+    pp = [0] * 10  # Priorities
+    bt = [0] * 10  # Burst Times
+    w = [0] * 10  # Waiting Times
+    t = [0] * 10  # Turnaround Times
+    print("Enter the burst time and priority for each process:")
+    for i in range(n):
+        print(f"Process[{i + 1}]")
+        bt[i] = int(input("Burst Time: "))  # Input Burst Time
+        pp[i] = int(input("Priority: "))    # Input Priority
+        p[i] = i + 1  # Assigning Process ID
+
+    # Sorting processes based on priority (higher number indicates higher priority)
+    for i in range(n - 1):
+        for j in range(i + 1, n):
+            if pp[i] < pp[j]:
+                # Swap priorities and corresponding burst times and IDs
+                pp[i], pp[j] = pp[j], pp[i]
+                bt[i], bt[j] = bt[j], bt[i]
+                p[i], p[j] = p[j], p[i]
+
+    # Initialize waiting time and turnaround time
+    w[0] = 0
+    awt = 0
+    t[0] = bt[0]
+    atat = t[0]
+    # Calculate waiting and turnaround times
+    for i in range(1, n):
+        w[i] = t[i - 1]  # Waiting time
+        awt += w[i]
+        t[i] = w[i] + bt[i]  # Turnaround time
+        atat += t[i]
+
+    # Print the process details
+    print("Process \t Burst time \t Wait time \t TAT \t Priority ")
+    for i in range(n):
+        print(f"{p[i]}\t\t{bt[i]}\t\t{w[i]}\t\t{t[i]}\t\t{pp[i]}")
+
+    # Calculate and print average waiting time and turnaround time
+    awt /= n
+    atat /= n
+    print(f"Average Wait time: {awt}")
+    print(f"Average TAT: {atat}")
+if __name__ == "__main__":
+    main()
