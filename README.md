@@ -3,6 +3,19 @@
 
 <br><br>
 
+## Semester 6 | TE
+
+### ▶️ [Database Management Systems | DBMS](./DBMS)
+#### Reference:
+  - https://github.com/sagar-viradiya/DBMS
+
+### ▶️ [LP1](./LP1)
+#### Reference:
+  - https://github.com/sagar-viradiya/LP1
+
+
+<br><br><hr><br><br>
+
 ## Semester 5 | TE 
 
 ### ▶️ [Computer Networks and Security | CNS](./CNS)
@@ -42,4 +55,10 @@
 ### ▶️ [Object Oriented Programming & Computer Graphics | OOPCG](./OOPCG)
 #### Reference:
   - [SPPU-2019-Pattern-SE-COMP-Computer-Graphics-Practicals](https://github.com/Parth1906/SPPU-2019-Pattern-SE-COMP-Computer-Graphics-Practicals)
-  - [SPPU-2019-Pattern-SE-COMP-Object-Oriented-Programming-Practicals](https://github.com/Parth1906/SPPU-2019-Pattern-SE-COMP-Object-Oriented-Programming-Practicals)
+  - [SPPU-2019-Pattern-SE-COMP-Object-Oriented-Programming-Practicals](httpshttps://github.com/Parth1906/SPPU-2019-Pattern-SE-COMP-Object-Oriented-Programming-Practicals)
+
+<br><br><hr><br><br>
+
+## Miscellaneous
+
+### ▶️ [मम](./मम)
