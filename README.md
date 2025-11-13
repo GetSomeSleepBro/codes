@@ -3,7 +3,12 @@
 
 <br><br>
 
-## Semester 6 | TE
+## Semester 5 | TE 
+
+### ▶️ [Computer Networks and Security | CNS](./CNS)
+#### Reference:
+  - https://github.com/shxntanu/TE-Lab-Assignments
+  - https://github.com/ashawe/CNL
 
 ### ▶️ [Database Management Systems | DBMS](./DBMS)
 #### Reference:
@@ -12,16 +17,7 @@
 ### ▶️ [LP1](./LP1)
 #### Reference:
   - https://github.com/sagar-viradiya/LP1
-
-
-<br><br><hr><br><br>
-
-## Semester 5 | TE 
-
-### ▶️ [Computer Networks and Security | CNS](./CNS)
-#### Reference:
-  - https://github.com/shxntanu/TE-Lab-Assignments
-  - https://github.com/ashawe/CNL
+    
 
 <br><br><hr><br><br>
 
