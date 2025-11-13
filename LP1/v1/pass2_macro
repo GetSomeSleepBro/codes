@@ -1,0 +1,62 @@
+class MacroProcessorPassTwo:
+    def __init__(self, mnt, mdt, source_code):
+        self.MNT = {entry['name']: entry['mdt_index'] for entry in mnt}
+        self.MDT = mdt
+        self.source_code = source_code
+        self.expanded_code = []
+
+    def expand_macro(self, macro_name, actual_args):
+        mdt_index = self.MNT[macro_name]
+        line = self.MDT[mdt_index]
+
+        arg_map = {}
+        formal_args = line.split()[1].split(",") if len(line.split()) > 1 else []
+        for i, formal_arg in enumerate(formal_args):
+            arg_map[formal_arg] = actual_args[i] if i < len(actual_args) else ""
+
+        idx = mdt_index + 1
+        while self.MDT[idx] != "MEND":
+            expanded_line = self.MDT[idx]
+            for key, val in arg_map.items():
+                expanded_line = expanded_line.replace(key, val)
+            self.expanded_code.append(expanded_line)
+            idx += 1
+
+    def process(self):
+        for line in self.source_code:
+            tokens = line.strip().split()
+            if not tokens:
+                continue
+
+            macro_name = tokens[0]
+            if macro_name in self.MNT:
+                args = tokens[1].split(",") if len(tokens) > 1 else []
+                self.expand_macro(macro_name, args)
+            else:
+                self.expanded_code.append(line.strip())
+
+    def display(self):
+        print("\nExpanded Source Code:")
+        for line in self.expanded_code:
+            print(line)
+
+mnt = [
+    {'name': 'INCR', 'mdt_index': 0}
+]
+
+mdt = [
+    'INCR #0,#1',
+    'ADD #0,#1',
+    'MEND'
+]
+
+source_code = [
+    'START 100',
+    'INCR A,B',
+    'END'
+]
+
+# === Run Pass 2 ===
+processor = MacroProcessorPassTwo(mnt, mdt, source_code)
+processor.process()
+processor.display()

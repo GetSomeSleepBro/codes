@@ -1,0 +1,123 @@
+class SymbolTable:
+    def __init__(self):
+        self.table = {}
+
+    def add_symbol(self, symbol, address=None):
+        if symbol not in self.table:
+            self.table[symbol] = address
+        elif address is not None:
+            self.table[symbol] = address
+
+    def get_address(self, symbol):
+        return self.table.get(symbol, 0)
+
+    def display(self):
+        print("\nSymbol Table:")
+        print("Symbol\tAddress")
+        for symbol, addr in self.table.items():
+            print(f"{symbol}\t{addr}")
+
+
+class AssemblerPassOne:
+    def __init__(self):
+        self.symbol_table = SymbolTable()
+        self.intermediate_code = []
+        self.locctr = 0
+
+        self.imperative_statements = {
+            "MOV": "01",
+            "ADD": "02",
+            "SUB": "03"
+        }
+
+        self.directives = ["START", "END", "ORIGIN", "EQU", "DS", "DC"]
+
+        self.registers = {
+            "AREG": "1",
+            "BREG": "2",
+            "CREG": "3",
+            "DREG": "4"
+        }
+
+    def process_line(self, label, opcode, operands):
+        if label:
+            self.symbol_table.add_symbol(label, self.locctr)
+
+        if opcode == "START":
+            self.locctr = int(operands[0])
+            self.intermediate_code.append(f"(AD,01) (C,{self.locctr})")
+
+        elif opcode == "END":
+            self.intermediate_code.append(f"(AD,02)")
+
+        elif opcode == "ORIGIN":
+            self.locctr = int(operands[0])
+            self.intermediate_code.append(f"(AD,03) (C,{self.locctr})")
+
+        elif opcode == "EQU":
+            value = self.symbol_table.get_address(operands[0])
+            self.symbol_table.add_symbol(label, value)
+            self.intermediate_code.append(f"(AD,04) (S,{operands[0]})")
+
+        elif opcode == "DS":
+            size = int(operands[0])
+            self.symbol_table.add_symbol(label, self.locctr)
+            self.intermediate_code.append(f"(DL,01) (C,{size})")
+            self.locctr += size
+
+        elif opcode == "DC":
+            value = int(operands[0])
+            self.symbol_table.add_symbol(label, self.locctr)
+            self.intermediate_code.append(f"(DL,02) (C,{value})")
+            self.locctr += 1
+
+        elif opcode in self.imperative_statements:
+            code = f"(IS,{self.imperative_statements[opcode]})"
+            reg_code = f"(R,{self.registers.get(operands[0], 0)})"
+            mem_op = operands[1]
+            self.symbol_table.add_symbol(mem_op)
+            mem_code = f"(S,{mem_op})"
+            self.intermediate_code.append(f"{code} {reg_code} {mem_code}")
+            self.locctr += 1
+
+    def pass_one(self, lines):
+        for line in lines:
+            parts = line.strip().split()
+            if len(parts) == 3:
+                label, opcode, ops = parts
+            elif len(parts) == 2:
+                label = ""
+                opcode, ops = parts
+            else:
+                continue
+
+            operands = [op.strip() for op in ops.split(",")] if ops else []
+            self.process_line(label, opcode, operands)
+
+    def display(self):
+        print("Intermediate Code:")
+        for line in self.intermediate_code:
+            print(line)
+        self.symbol_table.display()
+
+input_program = [
+    "START 100",
+    "LOOP MOV AREG, NUM",
+    "ADD BREG, VALUE",
+    "SUB CREG, TEMP",
+    "ORIGIN 105",
+    "DATA DS 2",
+    "CONST DC 5",
+    "TEMP DS 1",
+    "VALUE DC 10",
+    "NUM DC 20",
+    "END"
+]
+
+assembler1 = AssemblerPassOne()
+assembler1.pass_one(input_program)
+assembler1.display()
+
+assembler2 = PassTwoAssembler(assembler1.intermediate_code, assembler1.symbol_table.table)
+assembler2.generate_machine_code()
+assembler2.display()

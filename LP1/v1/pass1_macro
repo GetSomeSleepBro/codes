@@ -1,0 +1,88 @@
+class MacroProcessorPassOne:
+    def __init__(self):
+        self.MNT = []  # Macro Name Table: list of {name, MDT index}
+        self.MDT = []  # Macro Definition Table: list of lines
+        self.ALA = {}  # Argument List Array: maps &ARG to #n
+        self.current_index = 0  # Index in MDT
+        self.in_macro_def = False
+        self.output_lines = []  # Non-macro lines
+
+    def process_line(self, line):
+        tokens = line.strip().split()
+
+        # Start of macro definition
+        if tokens[0] == "MACRO":
+            self.in_macro_def = True
+            return
+
+        # End of macro definition
+        if tokens[0] == "MEND":
+            self.MDT.append("MEND")
+            self.in_macro_def = False
+            self.ALA = {}  # Reset ALA after each macro
+            return
+
+        if self.in_macro_def:
+            # If macro header
+            if not self.MNT or self.MNT[-1]["mdt_index"] != self.current_index:
+                macro_name = tokens[0]
+                args = tokens[1].split(",") if len(tokens) > 1 else []
+                self.ALA = {arg: f"#{i}" for i, arg in enumerate(args)}
+                self.MNT.append({
+                    "name": macro_name,
+                    "mdt_index": self.current_index
+                })
+                # Replace args in header with # notation
+                replaced_line = macro_name + " " + ",".join(self.ALA[arg] for arg in args)
+                self.MDT.append(replaced_line)
+                self.current_index += 1
+            else:
+                # Process body of macro
+                replaced_tokens = []
+                for token in tokens:
+                    if token in self.ALA:
+                        replaced_tokens.append(self.ALA[token])
+                    else:
+                        # Handle arguments like ARG1,ARG2
+                        subtokens = token.split(',')
+                        replaced_subtokens = []
+                        for sub in subtokens:
+                            replaced_subtokens.append(self.ALA.get(sub, sub))
+                        replaced_tokens.append(','.join(replaced_subtokens))
+                self.MDT.append(" ".join(replaced_tokens))
+                self.current_index += 1
+        else:
+            # Normal line (outside macro)
+            self.output_lines.append(line.strip())
+
+    def pass_one(self, code_lines):
+        for line in code_lines:
+            self.process_line(line)
+
+    def display(self):
+        print("MNT (Macro Name Table):")
+        print("Name\tMDT Index")
+        for entry in self.MNT:
+            print(f"{entry['name']}\t{entry['mdt_index']}")
+
+        print("\nMDT (Macro Definition Table):")
+        for i, line in enumerate(self.MDT):
+            print(f"{i}\t{line}")
+
+        print("\nExpanded Source Code (for Pass 2):")
+        for line in self.output_lines:
+            print(line)
+if __name__ == "__main__":
+    input_code = [
+        "MACRO",
+        "INCR &ARG1,&ARG2",
+        "ADD &ARG1,&ARG2",
+        "MEND",
+        "START 100",
+        "INCR A,B",
+        "END"
+    ]
+
+    processor = MacroProcessorPassOne()
+    processor.pass_one(input_code)
+    processor.display()
