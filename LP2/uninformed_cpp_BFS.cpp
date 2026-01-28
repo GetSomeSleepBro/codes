@@ -60,3 +60,47 @@ int main() {
     std::cout << "\n";
     return 0;
 }
+
+
+
+
+
+// #include <bits/stdc++.h>
+// using namespace std;
+
+// void bfs(int start, vector<vector<int>>& graph) {
+//     vector<bool> visited(graph.size(), false);
+//     queue<int> q;
+
+//     visited[start] = true;
+//     q.push(start);
+
+//     while (!q.empty()) {
+//         int node = q.front();
+//         q.pop();
+
+//         cout << node << " ";
+
+//         for (int neighbor : graph[node]) {
+//             if (!visited[neighbor]) {
+//                 visited[neighbor] = true;
+//                 q.push(neighbor);
+//             }
+//         }
+//     }
+// }
+
+// int main() {
+//     int n = 5;
+//     vector<vector<int>> graph(n);
+
+//     graph[0] = {1, 2};
+//     graph[1] = {3};
+//     graph[2] = {};
+//     graph[3] = {4};
+//     graph[4] = {};
+
+//     bfs(0, graph);
+
+//     return 0;
+// }
