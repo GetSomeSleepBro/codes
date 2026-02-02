@@ -3,6 +3,19 @@
 
 <br><br>
 
+## Semester 6 | TE 
+
+### ▶️ [Data Science & Big Data Analytics | DSBDA](./DSBDA)
+#### Reference:
+  -
+
+### ▶️ [LP2](./LP2)
+#### Reference:
+  - 
+    
+
+<br><br><hr><br><br>
+
 ## Semester 5 | TE 
 
 ### ▶️ [Computer Networks and Security | CNS](./CNS)
