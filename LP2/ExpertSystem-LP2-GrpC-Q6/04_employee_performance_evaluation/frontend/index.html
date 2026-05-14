@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employee Performance Expert System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <h1>Employee Performance Expert System</h1>
+    <p class="hint">Select employee factors to get a performance category.</p>
+
+    <form id="expertForm" class="panel">
+      <label>
+        Attendance
+        <select name="attendance">
+          <option value="poor">Poor</option>
+          <option value="average">Average</option>
+          <option value="good">Good</option>
+        </select>
+      </label>
+
+      <label>
+        Work quality
+        <select name="quality">
+          <option value="poor">Poor</option>
+          <option value="average">Average</option>
+          <option value="good">Good</option>
+        </select>
+      </label>
+
+      <label>
+        Target completion
+        <select name="targets">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+
+      <label>
+        Teamwork
+        <select name="teamwork">
+          <option value="poor">Poor</option>
+          <option value="average">Average</option>
+          <option value="good">Good</option>
+        </select>
+      </label>
+
+      <button type="submit">Evaluate</button>
+    </form>
+
+    <section id="result" class="result" aria-live="polite"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

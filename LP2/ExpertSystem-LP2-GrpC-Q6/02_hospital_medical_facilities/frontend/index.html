@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hospital Expert System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <h1>Hospital Expert System</h1>
+    <p class="hint">Select patient symptoms to get a simple care recommendation.</p>
+
+    <form id="expertForm" class="panel">
+      <label>
+        Fever
+        <select name="fever">
+          <option value="no">No</option>
+          <option value="mild">Mild</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+
+      <label>
+        Breathing problem
+        <select name="breathing">
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
+      </label>
+
+      <label>
+        Pain level
+        <select name="pain">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="severe">Severe</option>
+        </select>
+      </label>
+
+      <label>
+        Injury
+        <select name="injury">
+          <option value="no">No</option>
+          <option value="minor">Minor</option>
+          <option value="major">Major</option>
+        </select>
+      </label>
+
+      <button type="submit">Check Care Level</button>
+    </form>
+
+    <section id="result" class="result" aria-live="polite"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Information Management Expert System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <h1>Information Management Expert System</h1>
+    <p class="hint">Enter information details to get a simple management recommendation.</p>
+
+    <form id="expertForm" class="panel">
+      <label>
+        Data sensitivity
+        <select name="sensitivity">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+
+      <label>
+        Access frequency
+        <select name="frequency">
+          <option value="rare">Rare</option>
+          <option value="regular">Regular</option>
+          <option value="frequent">Frequent</option>
+        </select>
+      </label>
+
+      <label>
+        Backup importance
+        <select name="backup">
+          <option value="normal">Normal</option>
+          <option value="important">Important</option>
+          <option value="critical">Critical</option>
+        </select>
+      </label>
+
+      <label>
+        Sharing required?
+        <select name="sharing">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </label>
+
+      <button type="submit">Get Recommendation</button>
+    </form>
+
+    <section id="result" class="result" aria-live="polite"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

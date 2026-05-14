@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Airline Cargo Scheduling Expert System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <h1>Airline Cargo Scheduling Expert System</h1>
+    <p class="hint">Select scheduling details to get a simple action.</p>
+
+    <form id="expertForm" class="panel">
+      <label>
+        Cargo urgency
+        <select name="urgency">
+          <option value="normal">Normal</option>
+          <option value="urgent">Urgent</option>
+          <option value="emergency">Emergency</option>
+        </select>
+      </label>
+
+      <label>
+        Weather condition
+        <select name="weather">
+          <option value="clear">Clear</option>
+          <option value="rain">Rain</option>
+          <option value="storm">Storm</option>
+        </select>
+      </label>
+
+      <label>
+        Flight capacity
+        <select name="capacity">
+          <option value="low">Low</option>
+          <option value="available">Available</option>
+          <option value="full">Full</option>
+        </select>
+      </label>
+
+      <label>
+        Cargo type
+        <select name="cargo">
+          <option value="normal">Normal</option>
+          <option value="fragile">Fragile</option>
+          <option value="medical">Medical</option>
+        </select>
+      </label>
+
+      <button type="submit">Schedule</button>
+    </form>
+
+    <section id="result" class="result" aria-live="polite"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

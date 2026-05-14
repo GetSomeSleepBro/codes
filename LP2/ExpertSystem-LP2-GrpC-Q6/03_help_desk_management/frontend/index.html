@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Help Desk Expert System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <h1>Help Desk Expert System</h1>
+    <p class="hint">Enter ticket details to get a support action.</p>
+
+    <form id="expertForm" class="panel">
+      <label>
+        Issue type
+        <select name="issue">
+          <option value="password">Password</option>
+          <option value="network">Network</option>
+          <option value="software">Software</option>
+          <option value="hardware">Hardware</option>
+        </select>
+      </label>
+
+      <label>
+        Number of users affected
+        <select name="users">
+          <option value="one">One user</option>
+          <option value="team">Team</option>
+          <option value="many">Many users</option>
+        </select>
+      </label>
+
+      <label>
+        Business impact
+        <select name="impact">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+
+      <button type="submit">Classify Ticket</button>
+    </form>
+
+    <section id="result" class="result" aria-live="polite"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

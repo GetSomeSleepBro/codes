@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stock Trading Expert System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <h1>Stock Trading Expert System</h1>
+    <p class="hint">Select market signals to get a simple trading suggestion.</p>
+
+    <form id="expertForm" class="panel">
+      <label>
+        Price trend
+        <select name="trend">
+          <option value="down">Down</option>
+          <option value="stable">Stable</option>
+          <option value="up">Up</option>
+        </select>
+      </label>
+
+      <label>
+        Company news
+        <select name="news">
+          <option value="negative">Negative</option>
+          <option value="neutral">Neutral</option>
+          <option value="positive">Positive</option>
+        </select>
+      </label>
+
+      <label>
+        Risk level
+        <select name="risk">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+
+      <label>
+        Volume
+        <select name="volume">
+          <option value="low">Low</option>
+          <option value="normal">Normal</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+
+      <button type="submit">Get Suggestion</button>
+    </form>
+
+    <section id="result" class="result" aria-live="polite"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
