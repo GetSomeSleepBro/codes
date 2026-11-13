@@ -1,0 +1,36 @@
+/**
+ * BT Assignment 6 - Business Network using Hyperledger (Composer)
+ * Business network: Vehicle trading between traders (asset transfer).
+ * File: models/org.example.trading.cto
+ */
+namespace org.example.trading
+
+// Participant: anyone who can own and trade assets
+participant Trader identified by traderId {
+  o String traderId
+  o String firstName
+  o String lastName
+  o Double balance
+}
+
+// Asset: the thing being traded
+asset Vehicle identified by vin {
+  o String vin
+  o String make
+  o String model
+  o Double price
+  --> Trader owner
+}
+
+// Transaction: transfers a vehicle from its owner to a buyer
+transaction Trade {
+  --> Vehicle vehicle
+  --> Trader newOwner
+}
+
+// Event emitted after every trade
+event TradeNotification {
+  --> Vehicle vehicle
+  o String oldOwner
+  o String newOwner
+}

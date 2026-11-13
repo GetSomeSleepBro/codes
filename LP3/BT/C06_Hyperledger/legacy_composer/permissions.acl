@@ -1,0 +1,44 @@
+/**
+ * BT Assignment 6 - Access control rules (permissions.acl)
+ */
+rule TraderCanReadEverything {
+    description: "Traders can read all resources"
+    participant: "org.example.trading.Trader"
+    operation: READ
+    resource: "org.example.trading.*"
+    action: ALLOW
+}
+
+rule OwnerCanTradeOwnVehicle {
+    description: "Only the owner of a vehicle can submit a Trade for it"
+    participant(p): "org.example.trading.Trader"
+    operation: CREATE
+    resource(t): "org.example.trading.Trade"
+    condition: (t.vehicle.owner.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+
+rule TraderCanUpdateViaTrade {
+    description: "Assets and traders may be updated only through a Trade transaction"
+    participant: "org.example.trading.Trader"
+    operation: UPDATE
+    resource: "org.example.trading.*"
+    transaction: "org.example.trading.Trade"
+    action: ALLOW
+}
+
+rule SystemACL {
+    description: "System ACL to permit all access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}

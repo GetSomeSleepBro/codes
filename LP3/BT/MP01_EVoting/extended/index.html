@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Voting dApp</title>
+<!-- ethers.js is kept locally so it works without CDN access -->
+<script src="ethers.umd.min.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 760px; margin: 30px auto; padding: 0 16px; background: #f4f6fb; color: #222; }
+  h1 { color: #2b4c9b; }
+  .card { background: #fff; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+  input { padding: 8px; width: 60%; margin-right: 6px; }
+  button { padding: 8px 14px; background: #2b4c9b; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin: 4px 0; }
+  button:hover { background: #1d3577; }
+  table { width: 100%; border-collapse: collapse; }
+  td, th { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
+  #status { font-weight: bold; color: #b5480b; word-break: break-all; }
+</style>
+</head>
+<body>
+<h1>Blockchain E-Voting dApp</h1>
+
+<div class="card">
+  <p>1. Deploy <b>Voting.sol</b> from Remix using <i>Injected Provider - MetaMask</i>. Paste the contract address here.</p>
+  <input id="addr" placeholder="Contract address 0x...">
+  <button onclick="connect()">Connect MetaMask</button>
+  <p>Account: <span id="account">-</span></p>
+  <p id="status"></p>
+</div>
+
+<div class="card">
+  <h3>Admin</h3>
+  <input id="cname" placeholder="Candidate name"><button onclick="send('addCandidate', val('cname'))">Add Candidate</button><br>
+  <input id="voter" placeholder="Voter address 0x..."><button onclick="send('registerVoter', val('voter'))">Register Voter</button><br>
+  <button onclick="send('startVoting')">Start Voting</button>
+  <button onclick="send('endVoting')">End Voting</button>
+</div>
+
+<div class="card">
+  <h3>Candidates</h3>
+  <button onclick="loadCandidates()">Refresh</button>
+  <table><thead><tr><th>ID</th><th>Name</th><th>Votes</th><th></th></tr></thead><tbody id="list"></tbody></table>
+</div>
+
+<div class="card">
+  <h3>Result</h3>
+  <button onclick="showWinner()">Show Winner</button>
+  <p id="winner"></p>
+</div>
+
+<script>
+const ABI = [{"inputs": [], "stateMutability": "nonpayable", "type": "constructor"}, {"anonymous": false, "inputs": [{"indexed": false, "internalType": "uint256", "name": "id", "type": "uint256"}, {"indexed": false, "internalType": "string", "name": "name", "type": "string"}], "name": "CandidateAdded", "type": "event"}, {"anonymous": false, "inputs": [{"indexed": false, "internalType": "address", "name": "voter", "type": "address"}, {"indexed": false, "internalType": "uint256", "name": "candidateId", "type": "uint256"}], "name": "Voted", "type": "event"}, {"anonymous": false, "inputs": [{"indexed": false, "internalType": "address", "name": "voter", "type": "address"}], "name": "VoterRegistered", "type": "event"}, {"inputs": [{"internalType": "string", "name": "_name", "type": "string"}], "name": "addCandidate", "outputs": [], "stateMutability": "nonpayable", "type": "function"}, {"inputs": [], "name": "admin", "outputs": [{"internalType": "address", "name": "", "type": "address"}], "stateMutability": "view", "type": "function"}, {"inputs": [{"internalType": "uint256", "name": "", "type": "uint256"}], "name": "candidates", "outputs": [{"internalType": "uint256", "name": "id", "type": "uint256"}, {"internalType": "string", "name": "name", "type": "string"}, {"internalType": "uint256", "name": "voteCount", "type": "uint256"}], "stateMutability": "view", "type": "function"}, {"inputs": [], "name": "endVoting", "outputs": [], "stateMutability": "nonpayable", "type": "function"}, {"inputs": [], "name": "getAllCandidates", "outputs": [{"components": [{"internalType": "uint256", "name": "id", "type": "uint256"}, {"internalType": "string", "name": "name", "type": "string"}, {"internalType": "uint256", "name": "voteCount", "type": "uint256"}], "internalType": "struct Voting.Candidate[]", "name": "", "type": "tuple[]"}], "stateMutability": "view", "type": "function"}, {"inputs": [], "name": "getCandidateCount", "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}], "stateMutability": "view", "type": "function"}, {"inputs": [], "name": "getWinner", "outputs": [{"internalType": "string", "name": "name", "type": "string"}, {"internalType": "uint256", "name": "votes", "type": "uint256"}], "stateMutability": "view", "type": "function"}, {"inputs": [{"internalType": "address", "name": "", "type": "address"}], "name": "hasVoted", "outputs": [{"internalType": "bool", "name": "", "type": "bool"}], "stateMutability": "view", "type": "function"}, {"inputs": [{"internalType": "address", "name": "", "type": "address"}], "name": "isRegistered", "outputs": [{"internalType": "bool", "name": "", "type": "bool"}], "stateMutability": "view", "type": "function"}, {"inputs": [{"internalType": "address", "name": "_voter", "type": "address"}], "name": "registerVoter", "outputs": [], "stateMutability": "nonpayable", "type": "function"}, {"inputs": [], "name": "startVoting", "outputs": [], "stateMutability": "nonpayable", "type": "function"}, {"inputs": [{"internalType": "uint256", "name": "_candidateId", "type": "uint256"}], "name": "vote", "outputs": [], "stateMutability": "nonpayable", "type": "function"}, {"inputs": [], "name": "votingOpen", "outputs": [{"internalType": "bool", "name": "", "type": "bool"}], "stateMutability": "view", "type": "function"}];
+let contract;
+
+const val = id => document.getElementById(id).value.trim();
+const setStatus = msg => document.getElementById('status').innerText = msg;
+
+async function connect() {
+  if (!window.ethereum) { setStatus('MetaMask not found. Install the MetaMask extension.'); return; }
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send('eth_requestAccounts', []);
+  const signer = await provider.getSigner();
+  document.getElementById('account').innerText = await signer.getAddress();
+  if (!ethers.isAddress(val('addr'))) { setStatus("Enter a valid deployed contract address"); return; }
+  contract = new ethers.Contract(val('addr'), ABI, signer);
+  setStatus('Connected to contract.');
+  loadCandidates();
+}
+
+async function send(method, ...args) {
+  if (!contract) { setStatus('Connect first.'); return; }
+  try {
+    setStatus('Waiting for MetaMask confirmation...');
+    const tx = await contract[method](...args);
+    setStatus('Transaction sent: ' + tx.hash);
+    const receipt = await tx.wait();
+    setStatus(method + ' done. Gas used: ' + receipt.gasUsed.toString());
+    loadCandidates();
+  } catch (e) {
+    setStatus('Error: ' + (e.reason || e.shortMessage || e.message));
+  }
+}
+
+async function loadCandidates() {
+  if (!contract) return;
+  const list = await contract.getAllCandidates();
+  const body = document.getElementById('list');
+  body.innerHTML = '';
+  list.forEach(c => {
+    const tr = document.createElement('tr');
+    const tdId = tr.insertCell(); tdId.textContent = String(c.id);
+    const tdName = tr.insertCell(); tdName.textContent = String(c.name);
+    const tdCount = tr.insertCell(); tdCount.textContent = String(c.voteCount);
+    const tdButton = tr.insertCell();
+    const voteButton = document.createElement("button"); voteButton.textContent = "Vote";
+    voteButton.addEventListener("click", () => send("vote", c.id)); tdButton.appendChild(voteButton);
+    body.appendChild(tr);
+  });
+}
+
+async function showWinner() {
+  try {
+    const [name, votes] = await contract.getWinner();
+    document.getElementById('winner').innerText = 'Winner: ' + name + ' with ' + votes + ' votes';
+  } catch (e) {
+    setStatus('Error: ' + (e.reason || e.shortMessage || e.message));
+  }
+}
+</script>
+</body>
+</html>
