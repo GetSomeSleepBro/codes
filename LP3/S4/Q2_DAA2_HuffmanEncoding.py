@@ -5,79 +5,57 @@
 
 import heapq
 
-
-def huffman(text):
-    # Count character frequencies
+def huffman(data):
     freq = {}
-    for ch in text:
+
+    # Count frequency
+    for ch in data:
         freq[ch] = freq.get(ch, 0) + 1
 
     # Create min heap
-    heap = [(f, i, ch) for i, (ch, f) in enumerate(freq.items())]
+    heap = [[f, i, ch] for i, (ch, f) in enumerate(freq.items())]
     heapq.heapify(heap)
     count = len(heap)
 
     # Build Huffman Tree
     while len(heap) > 1:
-        f1, _, left = heapq.heappop(heap)
-        f2, _, right = heapq.heappop(heap)
+        a = heapq.heappop(heap)
+        b = heapq.heappop(heap)
 
-        heapq.heappush(heap, (f1 + f2, count, (left, right)))
+        heapq.heappush(heap, [a[0] + b[0], count, [a, b]])
         count += 1
 
-    # Generate Huffman Codes
-    codes = {}
-
+    # Generate codes
     def generate(node, code=""):
-        if isinstance(node, str):
-            codes[node] = code or "0"
+        if isinstance(node[2], str):
+            print(node[2], ":", code or "0")
         else:
-            generate(node[0], code + "0")
-            generate(node[1], code + "1")
+            generate(node[2][0], code + "0")
+            generate(node[2][1], code + "1")
 
-    generate(heap[0][2])
-
-    return codes
+    generate(heap[0])
 
 
 # Main Program
-text = input("Enter text: ")
+data = input("Enter string: ")
 
-if not text:
-    print("Please enter some text.")
-else:
-    codes = huffman(text)
-
+if data:
     print("\nHuffman Codes:")
-    for ch, code in codes.items():
-        print(f"{ch} : {code}")
-
-    encoded = "".join(codes[ch] for ch in text)
-
-    print("\nOriginal Text:", text)
-    print("Encoded Text :", encoded)
-    print("Original Size:", len(text) * 8, "bits")
-    print("Encoded Size :", len(encoded), "bits")
+    huffman(data)
+else:
+    print("Please enter some text.")
 
 
 # ============================================================
 # SAMPLE OUTPUT
 # ============================================================
 #
-# Enter text: aaabbc
+# Enter string: aaabbc
 #
 # Huffman Codes:
 # a : 0
 # c : 10
 # b : 11
-#
-# Original Text: aaabbc
-# Encoded Text : 000111110
-# Original Size: 48 bits
-# Encoded Size : 9 bits
-#
-# Note: Assumes 8 bits per input character.
-# Encoding size excludes tree/codebook storage overhead.
 
 
 # ============================================================
@@ -87,110 +65,108 @@ else:
 # ============================================================
 
 # THEORY:
-#
 # Huffman Encoding is a lossless compression algorithm
-# that uses a greedy strategy.
+# based on the Greedy Strategy.
 #
 # Frequently occurring characters get shorter binary codes,
 # while less frequent characters get longer codes.
 #
 # ALGORITHM:
 # 1. Count frequency of each character.
-# 2. Create a min heap using frequencies.
-# 3. Remove two minimum-frequency nodes.
-# 4. Merge them and insert back into the heap.
-# 5. Repeat until only one node remains.
+# 2. Create a min heap.
+# 3. Select two minimum-frequency nodes.
+# 4. Merge them and insert into the heap.
+# 5. Repeat until one root node remains.
 # 6. Assign 0 to left and 1 to right branches.
-# 7. Generate binary codes for each character.
 #
 # COMPLEXITY:
 # n = Total characters, k = Unique characters
-# B = Number of encoded bits
 #
-# Tree Construction: O(k log k)
-# Total Time       : O(n + k log k + B)
-# Space            : O(k + B), including encoded output
+# Heap construction : O(k)
+# Tree construction : O(k log k)
+# Frequency counting: O(n)
+# Tree storage      : O(k)
+# Code generation also takes time to output the codes.
 
 
 # Q1. What is Huffman Encoding?
-# Ans: A lossless compression algorithm that assigns
-# variable-length binary codes based on character frequency.
+# Ans: A lossless compression technique that assigns
+# variable-length binary codes based on frequencies.
 
 
-# Q2. Why is it called a Greedy Algorithm?
-# Ans: It repeatedly selects the two lowest-frequency
-# nodes, making the locally optimal choice at each step.
+# Q2. What is a Greedy Algorithm?
+# Ans: It selects the best immediate choice at each step
+# to reach an optimal solution.
 
 
-# Q3. What is a Greedy Algorithm?
-# Ans: An algorithm that makes the best immediate choice
-# at each step to achieve an optimal solution.
+# Q3. Why is Huffman Encoding greedy?
+# Ans: It repeatedly merges the two nodes with the
+# lowest frequencies.
 
 
-# Q4. Why do we use a Min Heap?
-# Ans: To efficiently find and remove the two nodes
-# having the lowest frequencies.
+# Q4. What is a Min Heap?
+# Ans: A data structure where the smallest element
+# is always at the root.
 
 
-# Q5. What is heapq?
-# Ans: Python's built-in min-heap library.
+# Q5. Why do we use heapq?
+# Ans: It efficiently finds and removes minimum elements.
 # Insertion and removal take O(log k) time.
 
 
-# Q6. Why do frequent characters get shorter codes?
-# Ans: Because shorter codes for frequent characters
-# reduce the total number of encoded bits.
-
-
-# Q7. What is a Huffman Tree?
+# Q6. What is a Huffman Tree?
 # Ans: A binary tree where leaf nodes represent characters
-# and internal nodes represent combined frequencies.
+# and internal nodes store combined frequencies.
 
 
-# Q8. What is time complexity?
-# Ans: It measures how execution time grows with input size.
-# Huffman tree construction takes O(k log k) time.
+# Q7. What is time complexity?
+# Ans: It describes how running time grows with input size.
+# Huffman tree construction takes O(k log k).
+
+
+# Q8. Why is tree construction O(k log k)?
+# Ans: We perform O(k) heap operations, and each
+# operation takes O(log k) time.
 
 
 # Q9. What is space complexity?
 # Ans: It measures memory usage.
-# The tree and codebook require O(k) space.
-# Encoded output additionally requires O(B) space.
+# Huffman tree and heap require O(k) space.
 
 
-# Q10. What is Lossless Compression?
+# Q10. What is lossless compression?
 # Ans: Compression where the original data can be
-# recovered exactly without losing information.
+# recovered without losing information.
 
 
-# Q11. What is a Prefix-Free Code?
-# Ans: No character's code is a prefix of another
+# Q11. Why do frequent characters get shorter codes?
+# Ans: To reduce the total number of bits required
+# to represent the data.
+
+
+# Q12. What is a prefix-free code?
+# Ans: No character's code is the prefix of another
 # character's code, allowing unambiguous decoding.
 
 
-# Q12. Can characters have equal frequencies?
-# Ans: Yes. Their codes may differ depending on the
-# tree structure, but the encoding remains optimal.
+# Q13. Can two characters have equal frequencies?
+# Ans: Yes. Different valid Huffman codes may be produced,
+# but the total encoded length remains optimal.
 
 
-# Q13. Where is Huffman Encoding used?
+# Q14. Where is Huffman Encoding used?
 # Ans: In compression formats such as ZIP, JPEG and PNG.
 
 
-# Q14. Is Huffman Encoding always smaller?
-# Ans: No. For small inputs, storing the tree or codebook
-# may use more space than the compression saves.
-
-
-# Q15. Why is Huffman Encoding efficient?
-# Ans: It uses a min heap to build an optimal prefix-free
-# code and reduces bits for frequent characters.
+# Q15. Why is iterative Fibonacci different from Huffman?
+# Ans: Fibonacci calculates a numerical sequence,
+# while Huffman uses greedy tree construction for compression.
 
 
 # ============================================================
 # CONCLUSION
 # ============================================================
 #
-# Huffman Encoding uses a greedy strategy and min heap
-# to perform lossless compression using binary codes.
+# Huffman Encoding uses a greedy strategy and a min heap
+# to generate optimal prefix-free binary codes.
 # ============================================================
