@@ -3,20 +3,30 @@
 
 <br><br>
 
-## Semester 6 | TE 
+## Semester 7 | BE
 
-### ▶️ [Data Science & Big Data Analytics | DSBDA](./DSBDA)
+### ▶️ [LP3](./LP3)
 #### Reference:
-  -
-
-### ▶️ [LP2](./LP2)
-#### Reference:
-  - 
-    
+  - https://github.com/Izumi6/LP-3-simple
+  - https://github.com/Arnavpk/lp3
 
 <br><br><hr><br><br>
 
-## Semester 5 | TE 
+## Semester 6 | TE
+
+### ▶️ [Data Science & Big Data Analytics | DSBDA](./DSBDA)
+#### Reference:
+  - [Practical datasets](./DSBDA/Dsbdl%20datasets)
+  - [Viva material](./DSBDA/viva)
+  - [Oral-exam material](./DSBDA/oral)
+
+### ▶️ [LP2](./LP2)
+#### Reference:
+  - [Expert systems](./LP2/ExpertSystem-LP2-GrpC-Q6)
+
+<br><br><hr><br><br>
+
+## Semester 5 | TE
 
 ### ▶️ [Computer Networks and Security | CNS](./CNS)
 #### Reference:
@@ -30,11 +40,11 @@
 ### ▶️ [LP1](./LP1)
 #### Reference:
   - https://github.com/sagar-viradiya/LP1
-    
+
 
 <br><br><hr><br><br>
 
-## Semester 4 | SE 
+## Semester 4 | SE
 
 ### ▶️ [Data Structures & Algorithms | DSA](./DSA)
 #### Reference:
@@ -52,7 +62,7 @@
 
 <br><br><hr><br><br>
 
-##  Semester 3 | SE 
+## Semester 3 | SE
 
 ### ▶️ [Fundamental in Data Structures | FDS](./FDS)
 #### Reference:
@@ -64,7 +74,7 @@
 ### ▶️ [Object Oriented Programming & Computer Graphics | OOPCG](./OOPCG)
 #### Reference:
   - [SPPU-2019-Pattern-SE-COMP-Computer-Graphics-Practicals](https://github.com/Parth1906/SPPU-2019-Pattern-SE-COMP-Computer-Graphics-Practicals)
-  - [SPPU-2019-Pattern-SE-COMP-Object-Oriented-Programming-Practicals](httpshttps://github.com/Parth1906/SPPU-2019-Pattern-SE-COMP-Object-Oriented-Programming-Practicals)
+  - [SPPU-2019-Pattern-SE-COMP-Object-Oriented-Programming-Practicals](https://github.com/Parth1906/SPPU-2019-Pattern-SE-COMP-Object-Oriented-Programming-Practicals)
 
 <br><br><hr><br><br>
 
